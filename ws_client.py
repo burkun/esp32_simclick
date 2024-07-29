@@ -1,10 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
-#
-# Copyright (c) 2024 bookerbai <bookerbai@tencent.com>
 # Create time: 2024-07-29 15:14
-# Distributed under terms of the Tencent license.
 
 """
 一个ws client连接实例
