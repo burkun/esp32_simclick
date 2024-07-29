@@ -72,7 +72,7 @@ void simClick(const WSString& message) {
 
     // 打印日志
     log_i("[message] -> click:%d, x:%d, y:%d.", clickBtn, moveX, moveY);
-    if  (bleMouse.isConnected()) {
+    if (bleMouse.isConnected()) {
       // 鼠标移动
       bleMouse.move(moveX, moveY);
       delay(BLE_HID_DELAY);
@@ -88,7 +88,7 @@ void simClick(const WSString& message) {
   }
 }
 
-int8_t getFreeClientIndex() { 
+int8_t getFreeClientIndex() {
   for (byte i = 0; i < maxClients; i++) {
     if (!clients[i].available()) return i;
   }
@@ -96,7 +96,7 @@ int8_t getFreeClientIndex() {
 }
 
 void handleMessage(WebsocketsClient &client, WebsocketsMessage message) {
-  strip.setBrightness(100); 
+  strip.setBrightness(100);
   if (message.isText()) {
     // extract data
     simClick(message.rawData());
@@ -104,7 +104,7 @@ void handleMessage(WebsocketsClient &client, WebsocketsMessage message) {
   } else {
     client.send("error: not text");
   }
-  strip.setBrightness(10);  
+  strip.setBrightness(10);
 }
 
 void handleEvent(WebsocketsClient &client, WebsocketsEvent event, String data) {
