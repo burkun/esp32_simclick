@@ -36,7 +36,7 @@ void setup() {
 
   // led
   strip.setLedColorData(0, 0, 255, 255);
-  strip.setBrightness(10);  
+  strip.setBrightness(10);
 
   // set up wifi
   WiFi.begin(ssid, password);
@@ -84,7 +84,7 @@ void simClick(const WSString& message) {
     }
   } else {
     // 打印错误日志
-    log_i("parse message %s error.", message.c_str());
+    log_e("parse message %s error", message.c_str());
   }
 }
 
@@ -96,7 +96,7 @@ int8_t getFreeClientIndex() {
 }
 
 void handleMessage(WebsocketsClient &client, WebsocketsMessage message) {
-  strip.setBrightness(100);  
+  strip.setBrightness(100); 
   if (message.isText()) {
     // extract data
     simClick(message.rawData());

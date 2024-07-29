@@ -21,7 +21,6 @@ async def send_heartbeat(websocket, message):
         except websockets.exceptions.ConnectionClosedError as e:
             print(f"Connection closed with error: {e}. Attempting to reconnect...")
             break
-        await asyncio.sleep(1)
 
 async def main():
     uri = "ws://192.168.33.206:80"
@@ -31,8 +30,7 @@ async def main():
                 await send_heartbeat(websocket, "1;-10;10")
         except Exception as e:
             print(f"An error occurred: {e}")
-        print("Reconnecting in 5 seconds...")
-        await asyncio.sleep(1)
+        print("Reconnecting in 1 seconds...")
 
 if __name__ == "__main__":
     asyncio.run(main())
