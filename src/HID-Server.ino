@@ -9,7 +9,6 @@
 #define LEDS_COUNT  8
 #define LEDS_PIN	2
 #define CHANNEL		0
-
 Freenove_ESP32_WS2812 strip = Freenove_ESP32_WS2812(LEDS_COUNT, LEDS_PIN, CHANNEL);
 
 using namespace websockets;
@@ -26,7 +25,7 @@ String clientIp;
 // Enter your WiFi credentials
 // ===========================
 const char *ssid = "Xiaomi13";
-const char *password = "Bureaucrat1989";
+const char *password = "123456";
 
 void setup() {
   Serial.begin(115200);
