@@ -4,16 +4,15 @@
 #include <esp32-hal-log.h>
 #include "ArduinoWebsockets.h"
 #include "BleMouse.h"
+#include "Freenove_WS2812_Lib_for_ESP32.h"
 
-#define LED_PIN 8  // 定义LED连接的引脚为GPIO8
+#define LEDS_COUNT  8
+#define LEDS_PIN	2
+#define CHANNEL		0
+
+Freenove_ESP32_WS2812 strip = Freenove_ESP32_WS2812(LEDS_COUNT, LEDS_PIN, CHANNEL);
 
 using namespace websockets;
-String clientIp;
-// ===========================
-// Enter your WiFi credentials
-// ===========================
-const char *ssid = "Xiaomi13";
-const char *password = "Bureaucrat1989";
 
 WebsocketsServer server;
 const byte maxClients = 1;
@@ -21,6 +20,13 @@ WebsocketsClient clients[maxClients];
 
 BleMouse bleMouse = BleMouse();
 #define BLE_HID_DELAY 500
+
+String clientIp;
+// ===========================
+// Enter your WiFi credentials
+// ===========================
+const char *ssid = "Xiaomi13";
+const char *password = "Bureaucrat1989";
 
 void setup() {
   Serial.begin(115200);
@@ -30,7 +36,8 @@ void setup() {
   bleMouse.begin();
 
   // led
-  pinMode(LED_PIN, OUTPUT);  // 设置GPIO8为输出
+  strip.setLedColorData(0, 0, 255, 255);
+  strip.setBrightness(10);  
 
   // set up wifi
   WiFi.begin(ssid, password);
@@ -82,13 +89,6 @@ void simClick(const WSString& message) {
   }
 }
 
-void blinkLed() {
-  digitalWrite(LED_PIN, HIGH); 
-  delay(100); 
-  digitalWrite(LED_PIN, LOW);
-  delay(50);
-} 
-
 int8_t getFreeClientIndex() { 
   for (byte i = 0; i < maxClients; i++) {
     if (!clients[i].available()) return i;
@@ -97,7 +97,7 @@ int8_t getFreeClientIndex() {
 }
 
 void handleMessage(WebsocketsClient &client, WebsocketsMessage message) {
-  blinkLed();
+  strip.setBrightness(100);  
   if (message.isText()) {
     // extract data
     simClick(message.rawData());
@@ -105,6 +105,7 @@ void handleMessage(WebsocketsClient &client, WebsocketsMessage message) {
   } else {
     client.send("error: not text");
   }
+  strip.setBrightness(10);  
 }
 
 void handleEvent(WebsocketsClient &client, WebsocketsEvent event, String data) {
