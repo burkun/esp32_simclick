@@ -9,6 +9,7 @@
 #define LEDS_COUNT  1
 #define LEDS_PIN	8
 #define CHANNEL		0
+
 Freenove_ESP32_WS2812 strip = Freenove_ESP32_WS2812(LEDS_COUNT, LEDS_PIN, CHANNEL);
 
 using namespace websockets;
@@ -27,6 +28,21 @@ String clientIp;
 const char *ssid = "Xiaomi13";
 const char *password = "123456";
 
+void connectToWiFi() {
+  log_i("Connecting to WiFi");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    log_i("connenct wifi %s ...", ssid);
+  }
+  if (WiFi.status() == WL_CONNECTED) {
+    clientIp = WiFi.localIP().toString();
+    log_i("wifi %s connected. local ip: %s", ssid, clientIp.c_str());
+  } else {
+    log_e("Failed to connect to WiFi. Please check your credentials.");
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   // set up mouse
@@ -39,15 +55,8 @@ void setup() {
   strip.setBrightness(10);
 
   // set up wifi
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
+  connectToWiFi();
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    log_i("connenct wifi %s ...", ssid);
-  }
-  clientIp = WiFi.localIP().toString();
-  log_i("wifi %s connected. local ip: %s", ssid, clientIp.c_str());
   // socket
   server.listen(80);
   log_i("is server live? %d", server.available());
@@ -72,7 +81,7 @@ void simClick(const WSString& message) {
 
     // 打印日志
     log_i("[message] -> click:%d, x:%d, y:%d.", clickBtn, moveX, moveY);
-    if (bleMouse.isConnected()) {
+    if  (bleMouse.isConnected()) {
       // 鼠标移动
       bleMouse.move(moveX, moveY);
       delay(BLE_HID_DELAY);
@@ -84,7 +93,7 @@ void simClick(const WSString& message) {
     }
   } else {
     // 打印错误日志
-    log_e("parse message %s error", message.c_str());
+    log_i("parse message %s error.", message.c_str());
   }
 }
 
@@ -114,6 +123,10 @@ void handleEvent(WebsocketsClient &client, WebsocketsEvent event, String data) {
 }
 
 void loop() {
+ if (WiFi.status() != WL_CONNECTED) {
+    log_e("WiFi disconnected. Attempting to reconnect...");
+    connectToWiFi();
+  }
   if (server.poll()) {
     int8_t freeIndex = getFreeClientIndex();
     if (freeIndex >= 0) {
